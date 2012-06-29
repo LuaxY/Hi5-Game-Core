@@ -73,7 +73,7 @@ class WebSocket
 					
 					if ($client < 0)
 					{
-						echo "error";
+						console("Connexion failed.", "ERROR");
 						continue;
 					}
 					else
@@ -185,14 +185,14 @@ class WebSocket
 	{
 		$headers = array();
 		
-		preg_match('#GET (.*?) HTTP#', $buffer, $match) && 						$headers['ressources'] = $match[1];
-        preg_match("#Host: (.*?)\r\n#", $buffer, $match) && 					$headers['host'] = $match[1];
-        // preg_match("#Sec-WebSocket-Key1: (.*?)\r\n#", $buffer, $match) && 	$headers['key1'] = $match[1];
-        // preg_match("#Sec-WebSocket-Key2: (.*?)\r\n#", $buffer, $match) && 	$headers['key2']= $match[1];
-        preg_match("#Sec-WebSocket-Key: (.*?)\r\n#", $buffer, $match) && 		$headers['key'] = $match[1];
-        // preg_match("#Sec-WebSocket-Protocol: (.*?)\r\n#", $buffer, $match) && 	$headers['protocol'] = $match[1];
-        preg_match("#Origin: (.*?)\r\n#", $buffer, $match) && 					$headers['origin'] = $match[1];
-        preg_match("#\r\n(.*?)\$#", $buffer, $match) && 						$headers['code'] = $match[1];
+		preg_match('#GET (.*?) HTTP#', $buffer, $match) && 							$headers['ressources'] = $match[1];
+		preg_match("#Host: (.*?)\r\n#", $buffer, $match) && 						$headers['host'] = $match[1];
+		// preg_match("#Sec-WebSocket-Key1: (.*?)\r\n#", $buffer, $match) && 		$headers['key1'] = $match[1];
+		// preg_match("#Sec-WebSocket-Key2: (.*?)\r\n#", $buffer, $match) && 		$headers['key2']= $match[1];
+		preg_match("#Sec-WebSocket-Key: (.*?)\r\n#", $buffer, $match) && 			$headers['key'] = $match[1];
+		// preg_match("#Sec-WebSocket-Protocol: (.*?)\r\n#", $buffer, $match) && 	$headers['protocol'] = $match[1];
+		preg_match("#Origin: (.*?)\r\n#", $buffer, $match) && 						$headers['origin'] = $match[1];
+		preg_match("#\r\n(.*?)\$#", $buffer, $match) && 							$headers['code'] = $match[1];
 		
 		return $headers;
 	}
@@ -201,13 +201,14 @@ class WebSocket
 	{
 		$headers = $this->getHeaders($buffer);
 		
-        $handshake = "HTTP/1.1 101 WebSocket Protocol Handshake\r\n".
-					 "Upgrade: WebSocket\r\n".
-					 "Connection: Upgrade\r\n".
-					 "Sec-WebSocket-Origin: {$headers['origin']}\r\n".
-					 "Sec-WebSocket-Location: ws://{$headers['host']}{$headers['ressources']}\r\n".
-					 // ($headers['protocol'] ? "Sec-WebSocket-Protocol: {$headers['protocol']}\r\n" : "").
-					 "Sec-WebSocket-Accept: ". base64_encode(SHA1($headers['key']."258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true)) . "\r\n\r\n";
+        $handshake = 
+		"HTTP/1.1 101 WebSocket Protocol Handshake\r\n".
+		"Upgrade: WebSocket\r\n".
+		"Connection: Upgrade\r\n".
+		"Sec-WebSocket-Origin: {$headers['origin']}\r\n".
+		"Sec-WebSocket-Location: ws://{$headers['host']}{$headers['ressources']}\r\n".
+		// ($headers['protocol'] ? "Sec-WebSocket-Protocol: {$headers['protocol']}\r\n" : "").
+		"Sec-WebSocket-Accept: ". base64_encode(SHA1($headers['key']."258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true)) . "\r\n\r\n";
 		
 		socket_write($user->socket, $handshake, strlen($handshake));
 		
@@ -292,6 +293,7 @@ class WebSocket
 		{
 			$text .= $data[$i] ^ $masks[$i%4];
 		}
+		
 		return array($opcode,$text);
 	}
 	
