@@ -185,14 +185,14 @@ class WebSocket
 	{
 		$headers = array();
 		
-		preg_match('#GET (.*?) HTTP#', $buffer, $match) && 							$headers['ressources'] = $match[1];
-		preg_match("#Host: (.*?)\r\n#", $buffer, $match) && 						$headers['host'] = $match[1];
-		// preg_match("#Sec-WebSocket-Key1: (.*?)\r\n#", $buffer, $match) && 		$headers['key1'] = $match[1];
-		// preg_match("#Sec-WebSocket-Key2: (.*?)\r\n#", $buffer, $match) && 		$headers['key2']= $match[1];
-		preg_match("#Sec-WebSocket-Key: (.*?)\r\n#", $buffer, $match) && 			$headers['key'] = $match[1];
-		// preg_match("#Sec-WebSocket-Protocol: (.*?)\r\n#", $buffer, $match) && 	$headers['protocol'] = $match[1];
-		preg_match("#Origin: (.*?)\r\n#", $buffer, $match) && 						$headers['origin'] = $match[1];
-		preg_match("#\r\n(.*?)\$#", $buffer, $match) && 							$headers['code'] = $match[1];
+		preg_match('#GET (.*?) HTTP#', $buffer, $match) &&							$headers['ressources'] = $match[1];
+		preg_match("#Host: (.*?)\r\n#", $buffer, $match) &&							$headers['host'] = $match[1];
+		// preg_match("#Sec-WebSocket-Key1: (.*?)\r\n#", $buffer, $match) &&		$headers['key1'] = $match[1];
+		// preg_match("#Sec-WebSocket-Key2: (.*?)\r\n#", $buffer, $match) &&		$headers['key2']= $match[1];
+		preg_match("#Sec-WebSocket-Key: (.*?)\r\n#", $buffer, $match) &&			$headers['key'] = $match[1];
+		// preg_match("#Sec-WebSocket-Protocol: (.*?)\r\n#", $buffer, $match) &&	$headers['protocol'] = $match[1];
+		preg_match("#Origin: (.*?)\r\n#", $buffer, $match) &&						$headers['origin'] = $match[1];
+		preg_match("#\r\n(.*?)\$#", $buffer, $match) &&								$headers['code'] = $match[1];
 		
 		return $headers;
 	}
