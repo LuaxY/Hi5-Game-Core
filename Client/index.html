@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>WebSocket Test</title>
+	
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+	
+	<script src="js/client.js"></script>
+	<script src="js/commands.js"></script>
+</head>
+<body>
+	<div id="Debug">
+		<div id="config">
+			<b>Location:</b><br />
+			<input type="text" id="host" value="ws://127.0.0.1:12345/server/" size="35" /><br />
+			<button id="connect" onclick="ySocket.connect();">Connect</button>
+			<button id="disconnect" onclick="ySocket.disconnect();" disabled="disabled">Disconnect</button>
+			<br /><br />
+			<b>Message:</b><br />
+			<input id="message" size="35" onKeyPress="ySocket.onkey(event)" disabled="disabled"><br />
+			<button id="send" onclick="ySocket.send();" disabled="disabled">Send</button>
+		</div>
+		<div id="log">
+			<b>Log:</b><span id="status"><b>Status:</b><img id="status-img" src="images/offline.png" /></span>
+			<div id="consoleLog"></div>
+			<button id="clear" onclick="ySocket.clear();">Clear log</button>
+			<button id="clear" onclick="Commands.init();">Auth</button>
+		</div>
+	</div>
+</body>
+</html> 
