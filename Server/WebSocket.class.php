@@ -7,10 +7,11 @@ class WebSocket
 
 	public function __construct()
 	{
-		global $host, $port;
+		global $host, $port, $Core;
 		
 		$this->host = $host;
 		$this->port = $port;
+		$this->Core = $Core;
 		
 		$this->users = array();
 	
@@ -52,11 +53,11 @@ class WebSocket
 		
 		$this->sockets = array($socketMaster);
 		
-		console("            WebSocket Server            ", "START", true);
-		console("========================================", "START");
-		console("Server Started : ".date('Y-m-d H:i:s'), "START");
-		console("Listening on   : ".$this->host.":".$this->port, "START");
-		console("========================================\r\n", "START");
+		$this->Core->console("            WebSocket Server            ", "START", true);
+		$this->Core->console("========================================", "START");
+		$this->Core->console("Server Started : ".date('Y-m-d H:i:s'), "START");
+		$this->Core->console("Listening on   : ".$this->host.":".$this->port, "START");
+		$this->Core->console("========================================\r\n", "START");
 		
 		while (true)
 		{
@@ -73,7 +74,7 @@ class WebSocket
 					
 					if ($client < 0)
 					{
-						console("Connexion failed.", "ERROR");
+						$this->Core->console("Connexion failed.", "ERROR");
 						continue;
 					}
 					else
@@ -137,7 +138,7 @@ class WebSocket
 		array_push($this->users, $user);
 		array_push($this->sockets, $socket);
 
-		console("Client connected ($socket).");
+		$this->Core->console("Client connected ($socket).");
 	}
 	
 	private function closeClient($socket)
@@ -162,7 +163,7 @@ class WebSocket
 			array_splice($this->sockets, $index, 1);
 		}
 		
-		console("Client disconnected ($socket).");
+		$this->Core->console("Client disconnected ($socket).");
 	}
 	
 	private function userInfos($socket)

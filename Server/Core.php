@@ -3,9 +3,20 @@
 require_once('Configuration.ini.php');
 require_once('WebSocket.class.php');
 
-function console($message, $type = 'INFO', $back = false)
+class Core
 {
-	echo ($back ? "\r\n<".date('H:i:s')."> [$type] $message\r\n" : "<".date('H:i:s')."> [$type] $message\r\n");
+	
+	public function __construct()
+	{
+		
+	}
+
+	public function console($message, $type = 'INFO', $back = false)
+	{
+		echo ($back ? "\r\n<".date('H:i:s')."> [$type] $message\r\n" : "<".date('H:i:s')."> [$type] $message\r\n");
+	}
+	
 }
 
+$Core = new Core();
 $WebSocket = new WebSocket();
