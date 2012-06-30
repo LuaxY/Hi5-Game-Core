@@ -21,7 +21,7 @@ var ySocket = {
 			};
 			
 			socket.onmessage = function (s) {
-				y.log('<font color="green"><b>[RECV]</b></font>: '+ s.data);
+				if (y.debug) { y.log('<font color="green"><b>[RECV]</b></font>: '+ s.data); }
 				c.analyse(s.data);
 			};
 			
@@ -55,7 +55,7 @@ var ySocket = {
 		
 		if (msg != '') {
 			$('message').value = '';
-			y.log('<font color="blue"><b>[SEND]</b></font>: ' + msg);
+			if (y.debug) { y.log('<font color="blue"><b>[SEND]</b></font>: ' + msg); }
 			socket.send(msg);
 		}
 	},

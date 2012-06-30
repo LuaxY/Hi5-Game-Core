@@ -3,18 +3,16 @@
 class WebSocket
 {
 	
-	protected $socket;
-
 	public function __construct()
 	{
-		global $host, $port, $Core;
+		global $host, $port;
 		
 		$this->host = $host;
 		$this->port = $port;
-		$this->Core = $Core;
 		
 		$this->users = array();
-	
+		
+		$this->addHandler('chat/', new ChatHandler());
 		$this->listen();
 	}
 	
@@ -30,7 +28,7 @@ class WebSocket
 		{
 			if ($channel != false)
 			{
-				if ($user->channel == $channel)
+				if (@$user->channel == $channel)
 				{
 					$this->send($user, $string);
 				}
@@ -44,6 +42,8 @@ class WebSocket
 	
 	private function listen()
 	{
+		global $Core;
+	
 		$socketMaster = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		
 		socket_set_option($socketMaster, SOL_SOCKET, SO_REUSEADDR, 1);
@@ -53,11 +53,11 @@ class WebSocket
 		
 		$this->sockets = array($socketMaster);
 		
-		$this->Core->console("            WebSocket Server            ", "START", true);
-		$this->Core->console("========================================", "START");
-		$this->Core->console("Server Started : ".date('Y-m-d H:i:s'), "START");
-		$this->Core->console("Listening on   : ".$this->host.":".$this->port, "START");
-		$this->Core->console("========================================\r\n", "START");
+		$Core->console("            WebSocket Server            ", "START", true);
+		$Core->console("========================================", "START");
+		$Core->console("Server Started : ".date('Y-m-d H:i:s'), "START");
+		$Core->console("Listening on   : ".$this->host.":".$this->port, "START");
+		$Core->console("========================================\r\n", "START");
 		
 		while (true)
 		{
@@ -74,7 +74,7 @@ class WebSocket
 					
 					if ($client < 0)
 					{
-						$this->Core->console("Connexion failed.", "ERROR");
+						$Core->console("Connexion failed.", "ERROR");
 						continue;
 					}
 					else
@@ -108,8 +108,7 @@ class WebSocket
 								case 0: // Continue
 									break;
 								case 1: // Message
-									$this->broadcast($decode[1], $user->channel);
-									// $this->broadcast($decode[1]);
+									$this->analyse($decode[1], $user);
 									break;
 								case 2: // Binary
 									break;
@@ -131,6 +130,8 @@ class WebSocket
 	
 	private function newClient($socket)
 	{
+		global $Core;
+		
 		$user->id = uniqid();
 		$user->socket = $socket;
 		$user->handshake = false;
@@ -138,11 +139,13 @@ class WebSocket
 		array_push($this->users, $user);
 		array_push($this->sockets, $socket);
 
-		$this->Core->console("Client connected ($socket).");
+		$Core->console("Client connected ($socket).");
 	}
 	
 	private function closeClient($socket)
 	{
+		global $Core;
+		
 		$found = null;
 		$n = count($this->users);
 		
@@ -163,7 +166,7 @@ class WebSocket
 			array_splice($this->sockets, $index, 1);
 		}
 		
-		$this->Core->console("Client disconnected ($socket).");
+		$Core->console("Client disconnected ($socket).");
 	}
 	
 	private function userInfos($socket)
@@ -215,6 +218,32 @@ class WebSocket
 		
 		$user->handshake = true;
 		$user->channel = $headers['ressources'];
+	}
+	
+	private function analyse($string, $user)
+	{
+		$channel = substr($user->channel, 1);
+		
+		switch ($channel)
+		{
+			case '':
+				break;
+			case 'chat/':
+				$this->handler['chat/']->onMessage($this, $string, $user);
+				break;
+			default:
+				$this->send($user, "error|Channel dosen't exist.");
+				break;
+		}
+		
+		// $this->broadcast($decode[1], $user->channel);
+		// $this->broadcast($decode[1]);
+		// $this->send($user, $decode[1]);
+	}
+	
+	private function addHandler($channel, $handler)
+	{
+		$this->handler[$channel] = $handler;
 	}
 	
 	private function encode($text, $opcode = 1)
@@ -295,7 +324,7 @@ class WebSocket
 			$text .= $data[$i] ^ $masks[$i%4];
 		}
 		
-		return array($opcode,$text);
+		return array($opcode, $text);
 	}
 	
 }

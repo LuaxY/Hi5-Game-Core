@@ -2,6 +2,7 @@
 
 require_once('Configuration.ini.php');
 require_once('WebSocket.class.php');
+require_once('ChatHandler.class.php');
 
 class Core
 {

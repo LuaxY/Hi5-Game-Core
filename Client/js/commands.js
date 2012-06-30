@@ -18,7 +18,7 @@ var Commands = {
 			case 'auth':
 				switch (split[1]) {
 					case 'wiyk':
-						y.send('auth|'+key);
+						y.send('auth|' + key);
 						break;
 					case 'good':
 						break;
@@ -29,8 +29,11 @@ var Commands = {
 						break;
 				}
 				break;
+			case 'chat':
+				y.log('<b>' + split[1] + '</b>: ' + split[2]);
+				break;
 			case 'error':
-				
+				y.log('<font color="orange"><b>[ERROR]</b></font>: ' + split[1]);
 				break;
 			default:
 				break;
